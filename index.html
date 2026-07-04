@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Tiles Match Game</title>
+</head>
+<body>
+
+<h1>Tiles Match Game</h1>
+
+<a href="game.html">
+  <button>Play</button>
+</a>
+
+<br><br>
+
+<Centre><button onclick="showHowToPlay()">How to Play</button></Centre>
+
+<div id="howToPlay" style="display:none;">
+  <p>
+    Match the same fruits
+    Click one tile, to flip it revealing the fruit
+    Match all the tiles to win.
+    You get 2 hints per match
+    There are a total of 36 tiles and you have to match 18
+  </p>
+</div>
+
+<script>
+function showHowToPlay() {
+  var box = document.getElementById("howToPlay");
+  if (box.style.display === "none") {
+    box.style.display = "block";
+  } else {
+    box.style.display = "none";
+  }
+}
+</script>
+
+</body>
+</html>
