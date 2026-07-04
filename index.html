@@ -1,40 +1,142 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Tiles Match Game</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fruit Flip</title>
+<style>
+  :root{
+    --green-deep:#123524;
+    --green-mid:#1E5B34;
+    --lime:#B7E45A;
+    --sun:#FFC94D;
+    --coral:#FF7A59;
+    --cream:#F6F1E3;
+    --ink:#10281A;
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  html,body{ height:100%; }
+
+  body{
+    color:var(--ink);
+    background:var(--green-deep);
+    overflow:hidden;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  .geo{ position:absolute; pointer-events:none; }
+  .geo.circle{ border-radius:50%; }
+  .geo.ring{ border-radius:50%; background:transparent; }
+
+  .g1{ width:38vmin; height:38vmin; background:var(--green-mid); border-radius:50%; top:-12vmin; left:-10vmin; }
+  .g2{ width:20vmin; height:20vmin; background:var(--sun); border-radius:50%; bottom:-6vmin; right:14vw; }
+  .g3{ border:1.4vmin solid var(--lime); border-radius:50%; width:26vmin; height:26vmin; top:10vh; right:-8vmin; }
+  .g4{ border-left:9vmin solid transparent; border-right:9vmin solid transparent;
+       border-bottom:15vmin solid var(--coral); bottom:12vh; left:6vw; transform:rotate(-14deg); }
+  .g5{ width:8vmin; height:8vmin; background:var(--cream); top:18vh; left:16vw; transform:rotate(45deg); }
+  .g6{ border:0.8vmin solid var(--cream); border-radius:50%; width:11vmin; height:11vmin; bottom:26vh; right:8vw; opacity:.5; }
+  .g7{ width:100vw; height:1px; left:0; bottom:9vh; opacity:.35;
+       background:repeating-linear-gradient(90deg,var(--lime) 0 14px, transparent 14px 28px); }
+
+  .fruit-mark{
+    position:relative;
+    width:16vmin;
+    height:16vmin;
+    margin-bottom:3.5vmin;
+  }
+  .fruit-mark .body{
+    position:absolute;
+    inset:2vmin 0 0 0;
+    border-radius:50%;
+    background:var(--coral);
+    box-shadow:inset -1.6vmin -1.6vmin 0 rgba(0,0,0,.14);
+  }
+  .fruit-mark .leaf{
+    position:absolute;
+    top:-1vmin;
+    left:56%;
+    width:7vmin;
+    height:3.6vmin;
+    background:var(--lime);
+    border-radius:0 100% 0 100%;
+    transform:rotate(-24deg);
+  }
+  .fruit-mark .stem{
+    position:absolute;
+    top:-0.4vmin;
+    left:48%;
+    width:0.9vmin;
+    height:3.4vmin;
+    background:var(--green-mid);
+    border-radius:1vmin;
+  }
+
+  .content{
+    position:relative;
+    z-index:2;
+    text-align:center;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+  }
+
+  h1{
+    font-size:clamp(2.6rem, 9vmin, 6rem);
+    color:var(--cream);
+    line-height:.95;
+    text-transform:uppercase;
+    letter-spacing:.02em;
+  }
+  h1 span{ color:var(--lime); }
+
+  .subtitle{
+    margin-top:1.2rem;
+    color:var(--cream);
+    opacity:.75;
+    font-size:clamp(.9rem,2.2vmin,1.1rem);
+    letter-spacing:.28em;
+    text-transform:uppercase;
+  }
+
+  .play-btn{
+    margin-top:4vmin;
+    display:inline-block;
+    text-decoration:none;
+    font-size:clamp(1.1rem,3vmin,1.5rem);
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--ink);
+    background:var(--sun);
+    padding:1.1em 3.2em;
+    border-radius:999px;
+    box-shadow:0 .5em 0 #C99527;
+  }
+  .play-btn:focus-visible{ outline:3px solid var(--lime); outline-offset:3px; }
+</style>
 </head>
 <body>
 
-<h1>Tiles Match Game</h1>
+  <div class="geo circle g1"></div>
+  <div class="geo circle g2"></div>
+  <div class="geo ring g3"></div>
+  <div class="geo g4"></div>
+  <div class="geo g5"></div>
+  <div class="geo ring g6"></div>
+  <div class="geo g7"></div>
 
-<a href="game.html">
-  <button>Play</button>
-</a>
-
-<br><br>
-
-<Centre><button onclick="showHowToPlay()">How to Play</button></Centre>
-
-<div id="howToPlay" style="display:none;">
-  <p>
-    Match the same fruits
-    Click one tile, to flip it revealing the fruit
-    Match all the tiles to win.
-    You get 2 hints per match
-    There are a total of 36 tiles and you have to match 18
-  </p>
-</div>
-
-<script>
-function showHowToPlay() {
-  var box = document.getElementById("howToPlay");
-  if (box.style.display === "none") {
-    box.style.display = "block";
-  } else {
-    box.style.display = "none";
-  }
-}
-</script>
+  <div class="content">
+    <div class="fruit-mark">
+      <div class="stem"></div>
+      <div class="leaf"></div>
+      <div class="body"></div>
+    </div>
+    <h1>Fruit<span>Flip</span></h1>
+    <p class="subtitle">Match all 18 pairs</p>
+    <a href="game.html" class="play-btn">Play</a>
+  </div>
 
 </body>
 </html>
