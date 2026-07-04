@@ -83,6 +83,43 @@
     width: 34px;
     height: 34px;
   }
+  #hintBtn {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    width: 64px;
+    height: 64px;
+    background-color: #F6F1E3;
+    border-radius: 16px;
+    box-shadow: 0 5px 0 rgba(0, 0, 0, 0.25);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  #hintBtn svg {
+    width: 34px;
+    height: 34px;
+  }
+  #hintCount {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background-color: #FF7A59;
+    color: #F6F1E3;
+    font-family: 'Fredoka', sans-serif;
+    font-size: 18px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  #hintBtn.disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
   #pauseMenu {
     display: none;
     position: fixed;
@@ -122,9 +159,53 @@
     width: 46px;
     height: 46px;
   }
+  #winScreen {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+  }
+  #winScreen.open {
+    display: flex;
+  }
+  .win-box {
+    background-color: #F6F1E3;
+    padding: 50px 60px;
+    border-radius: 28px;
+    text-align: center;
+    font-family: 'Fredoka', sans-serif;
+    color: #10281A;
+    box-shadow: 0 8px 0 rgba(0, 0, 0, 0.25);
+  }
+  .win-box h1 {
+    font-size: 56px;
+    margin: 0 0 10px 0;
+  }
+  .win-box p {
+    font-size: 28px;
+    margin: 0 0 30px 0;
+  }
+  .win-box .icon-btn {
+    margin: 0 auto;
+  }
 </style>
 </head>
 <body style="background-color: #1E5B34;">
+
+<div id="hintBtn" onclick="useHint()">
+  <svg viewBox="0 0 24 24" fill="none" stroke="#10281A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M15 14c.2-1 .7-1.7 1.5-2.5C17.7 10.2 18 9 18 7.5a6 6 0 0 0-12 0c0 1.5.3 2.7 1.5 4C8.3 12.3 8.8 13 9 14"/>
+    <path d="M9 18h6"/>
+    <path d="M10 22h4"/>
+  </svg>
+  <span id="hintCount">2</span>
+</div>
 
 <div id="pauseBtn" onclick="openPause()">
   <svg viewBox="0 0 24 24" fill="#10281A">
@@ -150,6 +231,19 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="#10281A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
         <path d="M3 11l9-8 9 8"/>
         <path d="M5 10v10h14V10"/>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<div id="winScreen">
+  <div class="win-box">
+    <h1>You Win!</h1>
+    <p id="winText">It took you 0 guesses</p>
+    <button class="icon-btn" onclick="resetGame()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#10281A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12a9 9 0 1 1-2.64-6.36"/>
+        <polyline points="21 3 21 9 15 9"/>
       </svg>
     </button>
   </div>
@@ -206,6 +300,7 @@ for (var i = 0; i < 36; i++) {
 var flipped = [];
 var matched = 0;
 var guesses = 0;
+var hints = 2;
 
 function tileClicked(e) {
   var tile = e.currentTarget;
@@ -242,9 +337,61 @@ function tileClicked(e) {
         for (var k = 0; k < tiles.length; k++) {
           tiles[k].style.opacity = 0;
         }
+        winGame();
       }
     }
   }
+}
+
+function useHint() {
+  if (hints <= 0) return;
+  if (flipped.length !== 1) return;
+
+  var selectedIdx = flipped[0];
+  var selectedImage = tiles[selectedIdx].getAttribute("data-image");
+
+  var partnerIdx = -1;
+  for (var i = 0; i < tiles.length; i++) {
+    if (i !== selectedIdx &&
+        tiles[i].getAttribute("data-image") === selectedImage &&
+        !tiles[i].classList.contains("matched")) {
+      partnerIdx = i;
+      break;
+    }
+  }
+  if (partnerIdx === -1) return;
+
+  var a = tiles[selectedIdx];
+  var b = tiles[partnerIdx];
+  b.classList.add("flipped");
+  a.classList.add("matched");
+  b.classList.add("matched");
+  a.style.opacity = 0.5;
+  b.style.opacity = 0.5;
+  matched++;
+  flipped = [];
+
+  hints--;
+  updateHintButton();
+
+  if (matched === 18) {
+    for (var k = 0; k < tiles.length; k++) {
+      tiles[k].style.opacity = 0;
+    }
+    winGame();
+  }
+}
+
+function updateHintButton() {
+  document.getElementById("hintCount").innerHTML = hints;
+  if (hints <= 0) {
+    document.getElementById("hintBtn").classList.add("disabled");
+  }
+}
+
+function winGame() {
+  document.getElementById("winText").innerHTML = "It took you " + guesses + " guesses";
+  document.getElementById("winScreen").classList.add("open");
 }
 
 function openPause() {
