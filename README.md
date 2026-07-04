@@ -2,7 +2,7 @@
 A game made in html where you have to match fruit tiles to win. There are a total of 18 fruits and 36 tiles so each fruit has 2 tiles alloted to it. You have to match all of them to win the game. Theres also a guess counter that counts how many guesses you made and it also displays your final guess count at the end of the game. It also features a hints mechanisim that 
 
 # How to play
-Just use the demo link to play the game, the website is being hosted on github XXXXXXX
+Just use the demo link to play the game, the website is being hosted on github https://minax811.github.io/FruitFlip/
 Upon opening the webstie youll see the homepage press play and youll get to the gameplay, just select random tiles and remember which fruit is under which tile and then you have to match them together. If you cant find a specific fruit pair you can select that fruit and press the hint button this will automatically select the pair for you. Each match the player will have 2 hints and you can choose to not use them aswell
 
 # Creating board
@@ -23,6 +23,12 @@ It features these buttons
   
   # main menu button
   Leads you to the homepage of the game its just connected with a simple link to the main page
+
+# How to run
+well you can just use the demo link(https://minax811.github.io/FruitFlip/) this is the website being hosted on github OR
+* Download my repository
+* load it up in vscode (or just double click the file but thats boring)
+* press go live button on the bottom right corner
 
 # Author
 -minax811
