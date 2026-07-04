@@ -2,12 +2,123 @@
 <html>
 <head>
 <title>Tiles Match Game</title>
+<style>
+  #board {
+    width: 700px;
+    height: 750px;
+    margin: 100px auto 0 auto;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: repeat(6, 1fr);
+    background-image: url("Woodtexture.jpg");
+  }
+  .cell {
+    position: relative;
+  }
+  .cell img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .tile {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    width: calc(100% - 12px);
+    height: calc(100% - 12px);
+    background-color: lightgrey;
+    cursor: pointer;
+    border-radius: 8px;
+  }
+</style>
 </head>
 <body style="background-color: green;">
 
-<div style="text-align: center;">
-  <img src="Woodtexture.jpg" alt="tile" width="700" height="700" style="margin-top: 100px;">
-</div>
+<div id="board"></div>
+
+<div id="counter" style="position: fixed; bottom: 10px; right: 10px; font-size: 48px;">Guesses: 0</div>
+
+<script>
+var images = [];
+for (var i = 1; i <= 18; i++) {
+  images.push("Image/image" + i + ".png");
+  images.push("Image/image" + i + ".png");
+}
+
+for (var i = images.length - 1; i > 0; i--) {
+  var j = Math.floor(Math.random() * (i + 1));
+  var temp = images[i];
+  images[i] = images[j];
+  images[j] = temp;
+}
+
+var board = document.getElementById("board");
+var tiles = [];
+
+for (var i = 0; i < 36; i++) {
+  var cell = document.createElement("div");
+  cell.className = "cell";
+
+  var img = document.createElement("img");
+  img.src = images[i];
+  cell.appendChild(img);
+
+  var tile = document.createElement("div");
+  tile.className = "tile";
+  tile.setAttribute("data-index", i);
+  tile.setAttribute("data-image", images[i]);
+  tile.onclick = tileClicked;
+  cell.appendChild(tile);
+
+  tiles.push(tile);
+  board.appendChild(cell);
+}
+
+var flipped = [];  
+var matched = 0;   
+var guesses = 0;
+
+function tileClicked(e) {
+  var tile = e.target;
+  var idx = parseInt(tile.getAttribute("data-index"));
+
+  if (tile.classList.contains("matched")) return;
+  if (flipped.indexOf(idx) !== -1) return;
+
+  if (flipped.length === 2) {
+    tiles[flipped[0]].style.opacity = 1;
+    tiles[flipped[1]].style.opacity = 1;
+    flipped = [];
+  }
+
+  tile.style.opacity = 0;
+  flipped.push(idx);
+
+  if (flipped.length === 2) {
+    guesses++;
+    document.getElementById("counter").innerHTML = "Guesses: " + guesses;
+
+    var a = tiles[flipped[0]];
+    var b = tiles[flipped[1]];
+
+    if (a.getAttribute("data-image") === b.getAttribute("data-image")) {
+      a.classList.add("matched");
+      b.classList.add("matched");
+      a.style.opacity = 0.5;
+      b.style.opacity = 0.5;
+      matched++;
+      flipped = [];
+
+      if (matched === 18) {
+        for (var k = 0; k < tiles.length; k++) {
+          tiles[k].style.opacity = 0;
+        }
+      }
+    }
+  }
+}
+</script>
 
 </body>
 </html>
