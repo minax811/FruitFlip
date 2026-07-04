@@ -14,22 +14,44 @@
   }
   .cell {
     position: relative;
+    perspective: 600px;        /* gives the flip some depth */
   }
-  .cell img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-  }
+  /* the tile is now a flip card */
   .tile {
     position: absolute;
     top: 6px;
     left: 6px;
     width: calc(100% - 12px);
     height: calc(100% - 12px);
-    background-color: lightgrey;
     cursor: pointer;
+    transform-style: preserve-3d;
+    transition: transform 0.4s;   /* the flip animation */
+  }
+  .tile.flipped {
+    transform: rotateY(180deg);
+  }
+  /* the two sides of the card */
+  .face {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     border-radius: 8px;
+    overflow: hidden;             /* keeps the fruit inside the rounded corners */
+    backface-visibility: hidden;
+  }
+  .back {
+    background-color: lightgrey;
+  }
+  .front {
+    transform: rotateY(180deg);
+  }
+  .front img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
   }
 </style>
 </head>
@@ -60,39 +82,51 @@ for (var i = 0; i < 36; i++) {
   var cell = document.createElement("div");
   cell.className = "cell";
 
-  var img = document.createElement("img");
-  img.src = images[i];
-  cell.appendChild(img);
-
   var tile = document.createElement("div");
   tile.className = "tile";
   tile.setAttribute("data-index", i);
   tile.setAttribute("data-image", images[i]);
-  tile.onclick = tileClicked;
-  cell.appendChild(tile);
 
+  // grey back
+  var back = document.createElement("div");
+  back.className = "face back";
+
+  // fruit front
+  var front = document.createElement("div");
+  front.className = "face front";
+  var img = document.createElement("img");
+  img.src = images[i];
+  front.appendChild(img);
+
+  tile.appendChild(back);
+  tile.appendChild(front);
+  tile.onclick = tileClicked;
+
+  cell.appendChild(tile);
   tiles.push(tile);
   board.appendChild(cell);
 }
 
-var flipped = [];  
-var matched = 0;   
+var flipped = [];
+var matched = 0;
 var guesses = 0;
 
 function tileClicked(e) {
-  var tile = e.target;
+  var tile = e.currentTarget;
   var idx = parseInt(tile.getAttribute("data-index"));
 
   if (tile.classList.contains("matched")) return;
   if (flipped.indexOf(idx) !== -1) return;
 
+  // if two non-matching tiles are still showing, flip them back first
   if (flipped.length === 2) {
-    tiles[flipped[0]].style.opacity = 1;
-    tiles[flipped[1]].style.opacity = 1;
+    tiles[flipped[0]].classList.remove("flipped");
+    tiles[flipped[1]].classList.remove("flipped");
     flipped = [];
   }
 
-  tile.style.opacity = 0;
+  // flip this tile
+  tile.classList.add("flipped");
   flipped.push(idx);
 
   if (flipped.length === 2) {
@@ -103,6 +137,7 @@ function tileClicked(e) {
     var b = tiles[flipped[1]];
 
     if (a.getAttribute("data-image") === b.getAttribute("data-image")) {
+      // matched: keep them flipped and make them a level of opaque
       a.classList.add("matched");
       b.classList.add("matched");
       a.style.opacity = 0.5;
@@ -110,6 +145,7 @@ function tileClicked(e) {
       matched++;
       flipped = [];
 
+      // all pairs found: make every tile transparent
       if (matched === 18) {
         for (var k = 0; k < tiles.length; k++) {
           tiles[k].style.opacity = 0;
